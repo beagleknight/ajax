@@ -94,6 +94,26 @@
       assertNoException(function () {
         this.xhr.onreadystatechange();
       }.bind(this));
+    },
+
+    "test should reset onreadystatechange when complete": function() {
+      this.xhr.readyState = 4;
+      ajax.get("/url");
+      this.xhr.onreadystatechange();
+
+      assertSame(tddjs.noop, this.xhr.onreadystatechange);
+    },
+
+    "test should call success handler for local requests": function() {
+      this.xhr.readyState = 4;
+      this.xhr.status = 0;
+      var success = stubFn();
+      tddjs.isLocal = stubFn(true);
+
+      ajax.get("file.html", { success: success });
+      this.xhr.onreadystatechange();
+
+      assert(success.called);
     }
   });
 }());
